@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using SymbolSource.Contract.Storage;
@@ -41,14 +43,15 @@ namespace SymbolSource.Contract.Tests
 
         public AzureStorageServiceTests()
         {
+            //used in AppVeyor and app.config
+            const string key = "AzureStorageTestConnectionString";
+
             storage = new StorageTestService(
                 new AzureStorageService(
                     new AzureStorageTestConfiguration
                     {
-                        ConnectionString = 
-                            "DefaultEndpointsProtocol=https;"
-                            + "AccountName=smbsrctest;"
-                            + "AccountKey=q8KVk0QG+iIIsjKiIZ6cnBcGuYyXRwHgHgIcA1TUMegVCKwJE5tmC8XWH4XCvDnCVm2Xua6Vro8SRi/Sk/IyxQ=="
+                        ConnectionString = Environment.GetEnvironmentVariable(key)
+                            ?? ConfigurationManager.AppSettings[key]
                     },
                     new NullSupportService()),
                 Path.GetRandomFileName().Replace(".", ""));
