@@ -1,0 +1,178 @@
+﻿{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "instanceName": {
+            "type": "string"
+        },
+        "instanceSalt": {
+            "type": "securestring"
+        },
+        "siteUrl": {
+            "type": "string"
+        },
+        "siteLocation": {
+            "type": "string",
+            "defaultValue": "West Europe"
+        },
+        "siteTier": {
+            "type": "string",
+            "allowedValues": [
+                "Free",
+                "Shared",
+                "Basic",
+                "Standard",
+                "Premium"
+            ],
+            "defaultValue": "Free"
+        },
+        "siteWorkerSize": {
+            "type": "string",
+            "allowedValues": [
+                "0",
+                "1",
+                "2"
+            ],
+            "defaultValue": "0"
+        },
+        "securityType": {
+            "type": "string",
+            "allowedValues": [
+                "Null",
+                "NuGetOrg"
+            ],
+            "defaultValue": "Null"
+        },
+        "schedulerType": {
+            "type": "string",
+            "allowedValues": [
+                "File",
+                "WebJobs"
+            ],
+            "defaultValue": "WebJobs"
+        },
+        "storageType": {
+            "type": "string",
+            "allowedValues": [
+                "Local",
+                "Azure"
+            ],
+            "defaultValue": "Azure"
+        },
+        "storageTier": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Standard_GRS",
+                "Standard_ZRS"
+            ]
+        },
+        "intercomAppId": {
+            "type": "securestring",
+            "defaultValue": ""
+        },
+        "intercomApiKey": {
+            "type": "securestring",
+            "defaultValue": ""
+        },
+        "insightsWebAppInstrumentationKey": {
+            "type": "securestring",
+            "defaultValue": ""
+        },
+        "insightsWebJobInstrumentationKey": {
+            "type": "securestring",
+            "defaultValue": ""
+        },
+        "_artifactsLocation": {
+            "type": "string"
+        },
+        "_artifactsLocationSasToken": {
+            "type": "securestring"
+        }
+    },
+    "variables": {
+        "sitePackage": "SymbolSource.Server/package.zip",
+        "siteName": "[concat('smbsrc-', parameters('instanceName'))]",
+        "storageName": "[replace(variables('siteName'), '-', '')]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2014-06-01",
+            "name": "[variables('siteName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[parameters('siteLocation')]",
+            "properties": {
+                "name": "[variables('siteName')]",
+                "sku": "[parameters('siteTier')]",
+                "workerSize": "[parameters('siteWorkerSize')]",
+                "numberOfWorkers": 1
+            }
+        },
+        {
+            "apiVersion": "2014-06-01",
+            "name": "[variables('siteName')]",
+            "type": "Microsoft.Web/sites",
+            "location": "[parameters('siteLocation')]",
+            "dependsOn": [
+                "[concat('Microsoft.Web/serverfarms/', variables('siteName'))]",
+                "[concat('Microsoft.Storage/storageAccounts/', variables('storageName'))]"
+            ],
+            "properties": {
+                "name": "[variables('siteName')]",
+                "serverFarm": "[variables('siteName')]"
+            },
+            "resources": [
+                {
+                    "name": "MSDeploy",
+                    "type": "extensions",
+                    "location": "[parameters('siteLocation')]",
+                    "apiVersion": "2014-06-01",
+                    "dependsOn": [
+                        "[concat('Microsoft.Web/sites/', variables('siteName'))]"
+                    ],
+                    "properties": {
+                        "packageUri": "[concat(parameters('_artifactsLocation'), '/', variables('sitePackage'), parameters('_artifactsLocationSasToken'))]",
+                        "dbType": "None",
+                        "connectionString": "",
+                        "setParameters": {
+                            "IIS Web Application Name": "[variables('siteName')]"
+                        }
+                    }
+                },
+                {
+                    "apiVersion": "2014-11-01",
+                    "name": "appsettings",
+                    "type": "config",
+                    "dependsOn": [
+                        "[concat('Microsoft.Web/sites/', variables('siteName'))]"
+                    ],
+                    "properties": {
+                        "InstanceName": "[parameters('instanceName')]",
+                        "InstanceSalt": "[parameters('instanceSalt')]",
+                        "Container.SecurityType": "[concat('SymbolSource.Contract.Security.', parameters('securityType'), 'SecurityService, SymbolSource.Contract')]",
+                        "Container.SchedulerType": "[concat('SymbolSource.Contract.Scheduler.', parameters('schedulerType'), 'SchedulerService, SymbolSource.Contract')]",
+                        "Container.StorageType": "[concat('SymbolSource.Contract.Storage.', parameters('storageType'), 'StorageService, SymbolSource.Contract')]",
+                        "AzureStorage.ConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(concat('Microsoft.Storage/storageAccounts/', variables('storageName')),'2015-05-01-preview').key1)]",
+                        "PackageProcessor.ServerUrl": "[parameters('siteUrl')]",
+                        "Support.IntercomAppId": "[parameters('intercomAppId')]",
+                        "Support.IntercomApiKey": "[parameters('intercomApiKey')]",
+                        "Support.InsightsWebAppInstrumentationKey": "[parameters('insightsWebAppInstrumentationKey')]",
+                        "Support.InsightsWebJobInstrumentationKey": "[parameters('insightsWebJobInstrumentationKey')]",
+                        "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(concat('Microsoft.Storage/storageAccounts/', variables('storageName')),'2015-05-01-preview').key1)]"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "[variables('storageName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "location": "[parameters('siteLocation')]",
+            "apiVersion": "2015-05-01-preview",
+            "dependsOn": [ ],
+            "properties": {
+                "accountType": "[parameters('storageTier')]"
+            }
+        }
+    ]
+}
