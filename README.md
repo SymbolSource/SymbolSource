@@ -77,6 +77,16 @@ Posts messages to disk as JSON files and monitors them using a FileSystemWatcher
 
 Processes all waiting packages on pressing RETURN.
 
+### Other settings
+
+For now, these need to be present in `Web.config`, even if empty, as provided in the repository:
+```
+<add key="Support.IntercomAppId" value="" />
+<add key="Support.IntercomApiKey" value="" />
+<add key="Support.InsightsWebAppInstrumentationKey" value="" />
+<add key="Support.InsightsWebJobInstrumentationKey" value="" />
+```
+
 ## Build status
 [![Build status](https://ci.appveyor.com/api/projects/status/github/SymbolSource/SymbolSource?branch=master&svg=true)](https://ci.appveyor.com/project/TripleEmcoder/symbolsource/branch/master)
 
