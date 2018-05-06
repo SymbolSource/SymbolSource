@@ -61,7 +61,7 @@ Uses an Azure Storage account. Assumes full ownership of the account and will au
 ### $storage = LocalStorageService
 
 Stores files in the a local filesystem.
-* `LocalStorage.RootPath`
+* `FileStorage.RootPath`
 
 ### $scheduler = WebJobsSchedulerService
 
