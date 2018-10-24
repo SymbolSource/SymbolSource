@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SymbolSource.Processor.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SymbolSource.Support", "SymbolSource.Support\SymbolSource.Support.csproj", "{F616FC3F-595F-4304-B147-FDAE872BB027}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SymbolSource.Processor.Topshelf", "SymbolSource.Processor.Topshelf\SymbolSource.Processor.Topshelf.csproj", "{EC5B248D-C564-4C41-9E6C-7B9CBEDA35CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{F616FC3F-595F-4304-B147-FDAE872BB027}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F616FC3F-595F-4304-B147-FDAE872BB027}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F616FC3F-595F-4304-B147-FDAE872BB027}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC5B248D-C564-4C41-9E6C-7B9CBEDA35CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC5B248D-C564-4C41-9E6C-7B9CBEDA35CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC5B248D-C564-4C41-9E6C-7B9CBEDA35CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC5B248D-C564-4C41-9E6C-7B9CBEDA35CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
