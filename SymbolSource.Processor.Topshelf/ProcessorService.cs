@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.WebJobs;
 using SymbolSource.Contract.Scheduler;
@@ -23,7 +24,13 @@ namespace SymbolSource.Processor.Topshelf
             if (!string.IsNullOrWhiteSpace(_support.InsightsInstrumentationKey))
                 TelemetryConfiguration.Active.InstrumentationKey = _support.InsightsInstrumentationKey;
             _cancellationTokenSource = ShutdownTokenSource();
-            _scheduler.ListenAndProcess(_cancellationTokenSource.Token);
+
+            Task.Run(() =>
+            {
+                _scheduler.ListenAndProcess(_cancellationTokenSource.Token);
+            });
+            
+            
             
             return true;
         }
